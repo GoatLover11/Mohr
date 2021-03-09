@@ -23,7 +23,7 @@
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="800.0" prefWidth="250.0">
                     <children>
                         <ScrollBar fx:id="sc" layoutX="14.0" layoutY="251.0" min="1.0" prefHeight="14.0" prefWidth="200.0" value="20.0" />
-                        <Pane fx:id="inP" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0">
+                        <Pane fx:id="inP1" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0">
                             <children>
                                 <TextField fx:id="ixy" layoutX="20.0" layoutY="135.0" />
                                 <TextField fx:id="iy" layoutX="20.0" layoutY="85.0" />

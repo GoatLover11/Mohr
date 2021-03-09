@@ -1,0 +1,19 @@
+<Button fx:id="next" layoutX="181.0" layoutY="213.0" mnemonicParsing="false" onAction="#next" text="=&gt;" />
+                  <Button fx:id="last" layoutX="148.0" layoutY="213.0" mnemonicParsing="false" onAction="#last" text="&lt;=" />
+                  <Pane id="inP2" fx:id="inP2" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" >
+                     <children>
+                        <TextField fx:id="F" layoutX="20.0" layoutY="135.0" />
+                        <TextField fx:id="Mx" layoutX="20.0" layoutY="85.0" />
+                        <TextField fx:id="My" layoutX="20.0" layoutY="35.0" />
+                        <Label layoutX="20.0" layoutY="15.0" text="F:" />
+                        <Label layoutX="20.0" layoutY="65.0" text="Mx:" />
+                        <Label layoutX="20.0" layoutY="115.0" text="My:" />
+                     </children>
+                  </Pane>
+                  <Pane id="inP3" fx:id="inP3" layoutX="24.0" layoutY="24.0" prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <TextField fx:id="px" layoutX="20.0" layoutY="135.0" />
+                        <TextField fx:id="py" layoutX="20.0" layoutY="85.0" />
+                        <Label layoutX="20.0" layoutY="15.0" text="Px:" />
+                        <Label layoutX="20.0" layoutY="65.0" text="Py:" />
+                     </children>

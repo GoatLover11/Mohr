@@ -46,7 +46,7 @@ public class MFrame extends JFrame {
         IMG.createGraphics();
 
         setTitle("Mhor");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(EXIT_ON_CLOSE);
         //setResizable(false);
         setSize(DIM);
         setLocationRelativeTo(null);

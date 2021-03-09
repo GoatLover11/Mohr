@@ -13,6 +13,7 @@ import utils.MFrame;
 //import javax.swing.*;
 import java.io.*;
 import java.net.URL;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -49,6 +50,14 @@ public class Controller implements Initializable{
     private TextField ixy;
 
     @FXML
+    private Pane inP1;
+    @FXML
+    private Pane inP2;
+    @FXML
+    private Pane inP3;
+    private ArrayList <Pane> InPane;
+
+    @FXML
     private ScrollBar sc;
 
     @FXML
@@ -56,12 +65,40 @@ public class Controller implements Initializable{
 
     @FXML
     public void last(){
+        int i = getTruePane();
+        setPane(false);
 
+        if (i-1 < 0)
+            InPane.get(i-1).setVisible(true);
+        else
+            InPane.get(InPane.size() - 1).setVisible(true);
     }
 
     @FXML
     public void next(){
+        int i = getTruePane();
+        setPane(false);
 
+        if (i+1 < InPane.size())
+            InPane.get(i+1).setVisible(true);
+        else
+            InPane.get(0).setVisible(true);
+    }
+
+    private void setPane(boolean b){
+        for (Pane p: InPane) {
+            p.setVisible(b);
+
+        }
+    }
+
+    private int getTruePane(){
+        int i = 0;
+        while (!InPane.get(i).isVisible()) {
+            i++;
+        }
+        System.out.println("Pane: " + i);;
+        return i;
     }
 
     @FXML
@@ -235,5 +272,14 @@ public class Controller implements Initializable{
 
         logarea.setEditable(false);
         log("Start");
+
+        InPane = new ArrayList<>();
+        InPane.add(inP1);
+        InPane.add(inP2);
+        InPane.add(inP3);
+        inP1.setVisible(true);
+        inP2.setVisible(false);
+        inP3.setVisible(false);
+
     }
 }
