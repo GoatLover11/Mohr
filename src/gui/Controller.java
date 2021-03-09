@@ -55,6 +55,16 @@ public class Controller implements Initializable{
     private ImageView imgView;
 
     @FXML
+    public void last(){
+
+    }
+
+    @FXML
+    public void next(){
+
+    }
+
+    @FXML
     public void calc(){
         pLineRun();
 

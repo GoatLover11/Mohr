@@ -12,7 +12,7 @@ import java.util.Collections;
 
 public class MFrame extends JFrame {
 
-    private double Ix = 0, Iy = 0, Ixy, R = 0, I1, I2, mid, fi;
+    private double Ix = 0, Iy = 0, Ixy, R = 0, I1, I2, mid, fi, A, Mx, My, Mz;
     private Dimension DIM = new Dimension(1600, 800);
     private int SC;
     private BufferedImage IMG;
@@ -65,6 +65,13 @@ public class MFrame extends JFrame {
         list.add("I2: " + I2);
 
         return list;
+    }
+
+    private void addForce(double A, double Mx, double My, double Mz){
+        this.A = A;
+        this.Mx = Mx;
+        this.My = My;
+        this.Mz = Mz;
     }
 
     private void draw() {
