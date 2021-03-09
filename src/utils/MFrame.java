@@ -54,6 +54,19 @@ public class MFrame extends JFrame {
 
     }
 
+    public ArrayList<String> getData(){
+        ArrayList <String> list = new ArrayList();
+
+        list.add("Ix: " + Ix);
+        list.add("Iy: " + Iy);
+        list.add("Ixy: " + Ixy);
+        list.add("fi: " + fi);
+        list.add("I1: " + I1);
+        list.add("I2: " + I2);
+
+        return list;
+    }
+
     private void draw() {
         Graphics g = IMG.getGraphics();
 

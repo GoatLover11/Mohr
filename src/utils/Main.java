@@ -15,10 +15,9 @@ public class Main {
 
         MFrame mf = new MFrame(Ix, Iy, Ixy, (int)Math.round(Iy/800));
 
-        /*
+
         GUI gui = new GUI();
         gui.laun(args);
 
-         */
     }
 }

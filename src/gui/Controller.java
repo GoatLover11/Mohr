@@ -62,7 +62,10 @@ public class Controller implements Initializable{
         d /= 800;
         log("Scale: " + (int)Math.round(d));
         try {
-            new MFrame(Double.valueOf(ix.getText()), Double.valueOf(iy.getText()), Double.valueOf(ixy.getText()), (int)Math.round(d));
+            MFrame mf = new MFrame(Double.valueOf(ix.getText()), Double.valueOf(iy.getText()), Double.valueOf(ixy.getText()), (int)Math.round(d));
+            for (String s : mf.getData()) {
+                log(s, Color.BLUE);
+            }
         }catch (Exception e){
             log("Adat HIBA!!!!", Color.RED);
         }
