@@ -1,5 +1,5 @@
 # Mohr
-Alfa fázisú Mphr kör rajzoló progi.
+Alfa fázisú Mohr kör rajzoló progi.
 Kb jól syzámol a rajzolás még nem tökéletes (hibás)
 
 
