@@ -1,6 +1,8 @@
 package utils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Stress {
 
@@ -51,10 +53,15 @@ public class Stress {
     private static double ys = 0;
     private static double mid = 0 /*Mohr közép*/;
     private static double fi = 0;       //radián
+
+    public static void setFiDeg(double fiDeg) {
+        Stress.fiDeg = fiDeg;
+    }
+
     private static double fiDeg = 0;       //radián
     private static double A = 0 /*Test területe*/;      //mm^2
-    private static double Mx = 0;       //Nm
-    private static double My = 0;
+    private static double M1 = 0;       //Nm
+    private static double M2 = 0;
     private static double Mz = 0;
     private static double F  = 0;       //N
     private static double Fx = 0;       //mm
@@ -64,17 +71,31 @@ public class Stress {
     * I1 I2 fi
     * */
     public static void calc1(){
-        mid = (Ix + Iy) / 2;
-        fi = (Math.PI - Math.atan(Math.abs(Ixy) / ((Math.abs(Iy) - Math.abs(Ix)) / 2))) / 2;
+
+        mid = ((Ix + Iy) / 2);
+        fi = (Math.PI - Math.atan(Math.abs(Ixy) /
+                ((Math.abs(Iy) - Math.abs(Ix)) / 2))) / 2;
         fiDeg = Math.toDegrees(fi);
 
-        I1 = mid + Math.sqrt(((Iy - Ix) / 2));
-        I2 = mid - Math.sqrt(((Iy - Ix) / 2));
+        //double memoria tulcsordulás könyen elöfordul
+        double gyb = (4 * Ixy * Ixy);
+        gyb += (Ix - Iy) * (Ix - Iy);
+
+        //System.out.println("gyb: " + gyb);
+        double gyok = Math.sqrt(gyb);
+        //System.out.println("gyök: " + gyok);
+
+        I1 = mid + 0.5 * gyok;
+        I2 = mid - 0.5 * gyok;
         R = Math.sqrt((Ixy * Ixy) + Math.pow((Iy - Ix) / 2, 2));
+
+        double fi2 = Math.atan((Ix - I1) / Ixy);
 
         System.out.println("I1: " + I1);
         System.out.println("I2: " + I2);
-        System.out.println("fi: " + fi);
+        //System.out.println("fi: " + fi);
+        System.out.println("fi deg: " + Stress.getFiDeg());
+        //System.out.println("fi2: " + Math.toDegrees(fi2));
     }
 
     /*
@@ -82,14 +103,11 @@ public class Stress {
      * */
     public static void calcF(){
 
-        Fx = Stress.toGeneral(Fx, Fy).x;
-        Fy = Stress.toGeneral(Fx, Fy).y;
+        M1 = F * Stress.toGeneral(Fx, Fy).y;
+        M2 = F * Stress.toGeneral(Fx, Fy).x;
 
-        Mx = F * Fy;
-        My = F * Fx;
-
-        System.out.println("Mx: " + Mx);
-        System.out.println("My: " + My);
+        System.out.println("M1: " + M1);
+        System.out.println("M2: " + M2);
     }
 
     public static double getFiDeg(){
@@ -100,8 +118,17 @@ public class Stress {
      * feszültség 1 pontra fő rendszerbe
      * */
     public static double calcStress(Point p){
-        return (F / A + Mx * p.y / I1 + My * p.x / I2); //szigma [MegaPascal]
+        return (F / A + M1 * p.y / I1 + M2 * p.x / I2); //szigma [MegaPascal]
 
+    }
+
+    /*
+    * I1 I2 másik modszerel
+    * */
+    public static void reCalcI(){
+        //még nem tökéletes
+        System.out.println("I1 (BME): " + (Ix - Ixy * Math.tan(fi)));
+        System.out.println("I2 (Bab): " + (Ixy / Math.tan(fi) - Iy));
     }
 
     /*
@@ -119,6 +146,26 @@ public class Stress {
 
     }
 
+    public static double getMaxStress(ArrayList<Point> list){
+        ArrayList<Double> stress = Stress.calcStress(list);
+        double max = 0;
+        for (int i = 0; i < stress.size() -1; i++) {
+            if (Math.abs(max) < Math.abs(stress.get(i)))
+                max = stress.get(i);
+        }
+        return max;
+    }
+
+    public static double getMinStress(ArrayList<Point> list){
+        ArrayList<Double> stress = Stress.calcStress(list);
+        double min = 0;
+        for (int i = 0; i < stress.size() -1; i++) {
+            if (Math.abs(min) > Math.abs(stress.get(i)))
+                min = stress.get(i);
+        }
+        return min;
+    }
+
     /*
      * semleges tengely
      * Dekardba tér vissza
@@ -126,16 +173,36 @@ public class Stress {
      * */
     public static void calcNeutral(){
 
-        double gamma = Math.atan( (My * I1) / (Mx * I2) );      //semleges hajlásszög 1. tengelyhez képest
-        double v0 = (F * I1) / (Mx * A);        //2. tengely metszete
+        /*
+        //értelem helyes modositás nyomatékra + - miatt
+        M1 *= +1;
+        M2 *= +1;
+         */
+
+        double gamma = Math.atan( (M2 * I1) / (M1 * I2) );      //semleges hajlásszög 1. tengelyhez képest
+        //m1 re -1 vagy abs????
+        double v0 = -(F * I1) / ((-1*M1) * A);        //2. tengely metszete
+        System.out.println("v0: " + v0);
+
+        //gamma M1 M2 elöjel helyeség abs???? -1x???
+        //gamma *= -1;
 
         System.out.println("gamma: " + Math.toDegrees(gamma));
 
-        Point v02 = Stress.toDekard(0.0, v0);
+        //1, 2 kord to decard semleg pont
+        double v02x = (v0 * Math.sin(-1 * fi));
+        double v02y = (v0 * Math.cos(-1 * fi));
+
+        v02x += xs;
+        v02y += ys;
+
+        System.out.println("v02x: " + v02x);
+        System.out.println("v02y: " + v02y);
 
         double gamma2 = Math.tan(Math.abs(gamma) - Math.abs(fi)); //semleges dekárd hajlása
+        System.out.println("gamma2: " + Math.toDegrees(Math.abs(gamma) - Math.abs(fi)));        //ez jó
 
-        y0 = v02.y - gamma2 * v02.x;     //semleges tengely eredeti kord y metszés
+        y0 = v02y - (gamma2 * v02x);     //semleges tengely eredeti kord y metszés
         x0 = -y0 / gamma2 ;    //semleges metszi eredeti kord rendszer x tengelye
 
         System.out.println("x0: " + x0);
@@ -151,10 +218,10 @@ public class Stress {
         x = x - xs;
         y = y - ys;
 
-        x = x * Math.cos(fi) + y * Math.sin(fi);
-        y = -1 * x * Math.sin(-fi) + y * Math.cos(-fi);
+        double x2 = x * Math.cos(fi) + y * Math.sin(fi);
+        double y2 = -x * Math.sin(fi) + y * Math.cos(fi);
 
-        return new Point(x, y);
+        return new Point(x2, y2);
     }
 
     /*
@@ -163,13 +230,13 @@ public class Stress {
      * */
     public static Point toDekard(double x, double y){
 
-        x = x * Math.cos(-fi) + y * Math.sin(-fi);
-        y = -1 * x * Math.sin(-fi) + y * Math.cos(-fi);
+        double x2 = x * Math.cos(-fi) + y * Math.sin(-fi);
+        double y2 = -1 * x * Math.sin(-fi) + y * Math.cos(-fi);
 
-        x = x + xs;
-        y = y + ys;
+        x2 = x2 + xs;
+        y2 = y2 + ys;
 
-        return new Point(x, y);
+        return new Point(x2, y2);
 
     }
 
@@ -254,20 +321,20 @@ public class Stress {
         A = a;
     }
 
-    public static double getMx() {
-        return Mx;
+    public static double getM1() {
+        return M1;
     }
 
-    public static void setMx(double mx) {
-        Mx = mx;
+    public static void setM1(double m1) {
+        M1 = m1;
     }
 
     public double getMy() {
-        return My;
+        return M2;
     }
 
-    public static void setMy(double my) {
-        My = my;
+    public static void setM2(double m2) {
+        M2 = m2;
     }
 
     public static double getMz() {
